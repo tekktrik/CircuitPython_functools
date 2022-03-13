@@ -30,17 +30,7 @@ cache_record = {}
 
 class ObjectMark:
     pass
-
-# class _HashedSeq:
     
-#     def __init__(self, tup):
-#         self.tup = tup
-#         self.hashvalue = hash(tup)
-
-#     def __hash__(self):
-#         return self.hashvalue
-    
-
 def _make_key(args, kwargs, kwd_mark = (ObjectMark(), )):
     key = tuple(args)
     if kwargs:
