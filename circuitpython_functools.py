@@ -50,8 +50,6 @@ def cache(user_function):
 
     def cache_wrapper(*args, **kwargs):
         key = _make_key(args, kwargs)
-        # print("key: {}".format(key))
-        # print("key hash: {}", hash(key))
         result = cache_get(key, sentinel)
         if result is not sentinel:
             return result
