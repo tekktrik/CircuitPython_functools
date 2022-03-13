@@ -26,7 +26,7 @@ import gc
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/tekktrik/CircuitPython_functools.git"
 
-cache_record = {}
+cache_record = []
 
 class ObjectMark:
     pass
@@ -58,11 +58,11 @@ def cache(user_function):
         cache_dict[key] = result
         return result
 
-    cache_record[user_function.__name__] = cache_dict
+    cache_record.append(cache_dict)
 
     return cache_wrapper
 
 def clear_caches():
-    for cache_contents in cache_record.values():
+    for cache_contents in cache_record:
         cache_contents.clear()
     gc.collect()
