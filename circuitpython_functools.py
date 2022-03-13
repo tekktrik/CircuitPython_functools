@@ -68,15 +68,11 @@ def cache(user_function):
         cache_dict[key] = result
         return result
 
-    print(dir(user_function))
-    print(user_function.__class__)
     cache_record[user_function.__name__] = cache_dict
 
     return cache_wrapper
 
-def clear_caches(*cache_names):
-    if cache_names:
-        [cache_contents.clear() for cache_name, cache_contents in cache_record.items() if cache_name in cache_names]
-    else:
-        [cache_contents.clear() for cache_contents in cache_record.values()]
+def clear_caches():
+    for cache_contents in cache_record.values():
+        cache_contents.clear()
     gc.collect()
