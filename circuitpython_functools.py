@@ -6,7 +6,9 @@
 `circuitpython_functools`
 ================================================================================
 
-A CircuitPython implementation of CPython's functools library
+A CircuitPython implementation of CPython's functools library.  Note that
+this implementation is not a 1-to-1 replica, but rather provides the same
+functionality with minor differences in usage.
 
 
 * Author(s): Alec Delaney
