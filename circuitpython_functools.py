@@ -28,10 +28,12 @@ __repo__ = "https://github.com/tekktrik/CircuitPython_functools.git"
 
 cache_record = []
 
-class ObjectMark:
+# pylint: disable=too-few-public-methods
+class _ObjectMark:
     pass
-    
-def _make_key(args, kwargs, kwd_mark = (ObjectMark(), )):
+
+
+def _make_key(args, kwargs, kwd_mark=(_ObjectMark(),)):
     key = tuple(args)
     if kwargs:
         key += kwd_mark
@@ -39,16 +41,17 @@ def _make_key(args, kwargs, kwd_mark = (ObjectMark(), )):
             key += tuple(item)
     return hash(key)
 
+
 def cache(user_function):
     """Unbounded cache"""
     sentinel = object()
     cache_dict = {}
     cache_get = cache_dict.get
-    
+
     def cache_wrapper(*args, **kwargs):
         key = _make_key(args, kwargs)
-        #print("key: {}".format(key))
-        #print("key hash: {}", hash(key))
+        # print("key: {}".format(key))
+        # print("key hash: {}", hash(key))
         result = cache_get(key, sentinel)
         if result is not sentinel:
             return result
@@ -60,7 +63,9 @@ def cache(user_function):
 
     return cache_wrapper
 
+
 def clear_caches():
+    """Clears all the caches"""
     for cache_contents in cache_record:
         cache_contents.clear()
     gc.collect()
