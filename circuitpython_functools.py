@@ -51,9 +51,7 @@ def cache(user_function):
         #print("key hash: {}", hash(key))
         result = cache_get(key, sentinel)
         if result is not sentinel:
-            print("result found")
             return result
-        print("result not found")
         result = user_function(*args, **kwargs)
         cache_dict[key] = result
         return result
