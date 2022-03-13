@@ -22,6 +22,7 @@ Implementation Notes
 """
 
 import gc
+from collections import OrderedDict
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/tekktrik/CircuitPython_functools.git"
@@ -42,24 +43,42 @@ def _make_key(args, kwargs, kwd_mark=(_ObjectMark(),)):
     return hash(key)
 
 
-def cache(user_function):
-    """Unbounded cache"""
-    sentinel = object()
-    cache_dict = {}
-    cache_get = cache_dict.get
+def lru_cache(maxsize):
 
-    def cache_wrapper(*args, **kwargs):
-        key = _make_key(args, kwargs)
-        result = cache_get(key, sentinel)
-        if result is not sentinel:
+    def cache(user_function):
+        """Unbounded cache"""
+        sentinel = object()
+        cache_dict = OrderedDict()
+        cache_get = cache_dict.get
+        cache_size = maxsize
+
+        def cache_wrapper(*args, **kwargs):
+            key = _make_key(args, kwargs)
+            result = cache_get(key, sentinel)
+            if result is not sentinel:
+                return result
+            result = user_function(*args, **kwargs)
+            local_cache_dict = cache_dict
+            if cache_size is not None:
+                if len(local_cache_dict) == cache_size:
+                    base_list = []
+                    index = 0
+                    for cache_key, cache_value in cache_dict.values():
+                        if index == 0:
+                            continue
+                        base_list.append((cache_key, cache_value))
+                    new_cache_dict = OrderedDict(base_list)
+                    index = 0
+                    local_cache_dict = new_cache_dict
+            local_cache_dict[key] = result
+            gc.collect()
             return result
-        result = user_function(*args, **kwargs)
-        cache_dict[key] = result
-        return result
 
-    cache_record.append(cache_dict)
+        cache_record.append(cache_dict)
 
-    return cache_wrapper
+        return cache_wrapper
+
+    return cache
 
 
 def clear_caches():
