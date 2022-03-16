@@ -69,3 +69,15 @@ def clear_caches():
     for cache_contents in cache_record:
         cache_contents.clear()
     gc.collect()
+
+
+# Ported from the MicroPython library
+def partial(func, *args, **kwargs):
+    """Creates a partion of the function"""
+
+    def _partial(*more_args, **more_kwargs):
+        kw = kwargs.copy()
+        kw.update(more_kwargs)
+        return func(*(args + more_args), **kw)
+
+    return _partial
