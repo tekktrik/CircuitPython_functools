@@ -76,8 +76,8 @@ def partial(func, *args, **kwargs):
     """Creates a partion of the function"""
 
     def _partial(*more_args, **more_kwargs):
-        kw = kwargs.copy()
-        kw.update(more_kwargs)
-        return func(*(args + more_args), **kw)
+        local_kwargs = kwargs.copy()
+        local_kwargs.update(more_kwargs)
+        return func(*(args + more_args), **local_kwargs)
 
     return _partial
