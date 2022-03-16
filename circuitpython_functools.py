@@ -73,7 +73,7 @@ def clear_caches():
 
 # Ported from the MicroPython library
 def partial(func, *args, **kwargs):
-    """Creates a partion of the function"""
+    """Creates a partial of the function"""
 
     def _partial(*more_args, **more_kwargs):
         local_kwargs = kwargs.copy()
