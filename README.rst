@@ -59,6 +59,38 @@ Or the following command to update an existing version:
 
     circup update
 
+Installing from PyPI
+====================
+
+.. note::
+
+    This library is provided on PyPI so that code developed for microcontrollers with this
+    library will also run on computers like the Raspberry Pi.  If you just need a package
+    for working with functiols on a computer or SBC only, consider using the Python standard
+    library's ``functools`` module instead.
+
+On supported GNU/Linux systems like the Raspberry Pi, you can install the driver locally `from
+PyPI <https://pypi.org/project/circuitpython-functools/>`_. To install for current user:
+
+.. code-block:: shell
+
+    pip3 install circuitpython-functools
+
+To install system-wide (this may be required in some cases):
+
+.. code-block:: shell
+
+    sudo pip3 install circuitpython-functools
+
+To install in a virtual environment in your current project:
+
+.. code-block:: shell
+
+    mkdir project-name && cd project-name
+    python3 -m venv .venv
+    source .venv/bin/activate
+    pip3 install circuitpython-functools
+
 Usage Example
 =============
 

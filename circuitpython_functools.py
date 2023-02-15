@@ -25,7 +25,7 @@ Implementation Notes
 
 import gc
 
-__version__ = "0.0.0-auto.0"
+__version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/tekktrik/CircuitPython_functools.git"
 
 cache_record = []
