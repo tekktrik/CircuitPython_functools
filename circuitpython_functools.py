@@ -1,7 +1,9 @@
 # SPDX-FileCopyrightText: 2017 Scott Shawcroft, written for Adafruit Industries
 # SPDX-FileCopyrightText: Copyright (c) 2022 Alec Delaney
+# SPDX-FileCopyrightText: MicroPython Developers
 #
 # SPDX-License-Identifier: MIT
+
 """
 `circuitpython_functools`
 ================================================================================
@@ -29,6 +31,7 @@ __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/tekktrik/CircuitPython_functools.git"
 
 cache_record = []
+
 
 # pylint: disable=too-few-public-methods
 class _ObjectMark:
@@ -81,3 +84,11 @@ def partial(func, *args, **kwargs):
         return func(*(args + more_args), **local_kwargs)
 
     return _partial
+
+
+# Thank you to the MicroPython Development team for
+# their simplified implementation of the wraps function!
+# pylint: disable=unused-argument
+def wraps(wrapped, assigned=None, updated=None):
+    """Defines a wrapper function when writing function decorators"""
+    return wrapped
