@@ -42,6 +42,7 @@ class _ObjectMark:
 
 # Cache-related code ported from CPython
 
+
 def _make_key(args, kwargs, kwd_mark=(_ObjectMark(),)):
     key = tuple(args)
     if kwargs:
