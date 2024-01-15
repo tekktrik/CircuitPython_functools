@@ -1,8 +1,10 @@
 # SPDX-FileCopyrightText: 2017 Scott Shawcroft, written for Adafruit Industries
 # SPDX-FileCopyrightText: Copyright (c) 2022 Alec Delaney
+# SPDX-FileCopyrightText: Python Software Foundation
 # SPDX-FileCopyrightText: MicroPython Developers
 #
 # SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: PSF-2.0
 
 """
 `circuitpython_functools`
@@ -47,6 +49,7 @@ def _make_key(args, kwargs, kwd_mark=(_ObjectMark(),)):
     return hash(key)
 
 
+# Cache-related code ported from CPython
 def cache(user_function):
     """Unbounded cache"""
     sentinel = object()
