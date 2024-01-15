@@ -41,6 +41,8 @@ class _ObjectMark:
 
 
 # Cache-related code ported from CPython
+# Unlike CPython, there is only one cache for all functions.
+# This class can be cleared using the function `clear_caches()`.
 
 
 def _make_key(args, kwargs, kwd_mark=(_ObjectMark(),)):
@@ -72,8 +74,8 @@ def cache(user_function):
     return cache_wrapper
 
 
-def cache_clear():
-    """Clears the cache"""
+def clear_caches():
+    """Clears all the caches"""
     for cache_contents in cache_record:
         cache_contents.clear()
     gc.collect()
