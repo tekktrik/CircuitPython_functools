@@ -49,6 +49,7 @@ def _make_key(args, kwargs, kwd_mark=(_ObjectMark(),)):
     return hash(key)
 
 
+# Cache-related code ported from CPython
 def cache(user_function):
     """Unbounded cache"""
     sentinel = object()
