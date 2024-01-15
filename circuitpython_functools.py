@@ -40,6 +40,8 @@ class _ObjectMark:
     pass
 
 
+# Cache-related code ported from CPython
+
 def _make_key(args, kwargs, kwd_mark=(_ObjectMark(),)):
     key = tuple(args)
     if kwargs:
@@ -49,7 +51,6 @@ def _make_key(args, kwargs, kwd_mark=(_ObjectMark(),)):
     return hash(key)
 
 
-# Cache-related code ported from CPython
 def cache(user_function):
     """Unbounded cache"""
     sentinel = object()
@@ -70,14 +71,14 @@ def cache(user_function):
     return cache_wrapper
 
 
-def clear_caches():
+def cache_clear():
     """Clears all the caches"""
     for cache_contents in cache_record:
         cache_contents.clear()
     gc.collect()
 
 
-# Ported from the MicroPython library
+# Partial ported from the MicroPython library
 def partial(func, *args, **kwargs):
     """Creates a partial of the function"""
 
