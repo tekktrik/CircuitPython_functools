@@ -40,6 +40,11 @@ class _ObjectMark:
     pass
 
 
+# Cache-related code ported from CPython
+# Unlike CPython, there is only one cache for all functions.
+# This class can be cleared using the function `clear_caches()`.
+
+
 def _make_key(args, kwargs, kwd_mark=(_ObjectMark(),)):
     key = tuple(args)
     if kwargs:
@@ -49,7 +54,6 @@ def _make_key(args, kwargs, kwd_mark=(_ObjectMark(),)):
     return hash(key)
 
 
-# Cache-related code ported from CPython
 def cache(user_function):
     """Unbounded cache"""
     sentinel = object()
@@ -77,7 +81,7 @@ def clear_caches():
     gc.collect()
 
 
-# Ported from the MicroPython library
+# Partial ported from the MicroPython library
 def partial(func, *args, **kwargs):
     """Creates a partial of the function"""
 
