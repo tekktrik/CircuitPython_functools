@@ -73,7 +73,7 @@ def cache(user_function):
 
 
 def cache_clear():
-    """Clears all the caches"""
+    """Clears the cache"""
     for cache_contents in cache_record:
         cache_contents.clear()
     gc.collect()
