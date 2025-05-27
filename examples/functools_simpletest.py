@@ -3,19 +3,26 @@
 #
 # SPDX-License-Identifier: Unlicense
 
-from circuitpython_functools import cache, clear_caches
+"""Example usage of the circuitpython_functools module."""
+
+from circuitpython_functools import cache
 
 
 class MathClass:
+    """Example class that performs simple arithmetic."""
+
     def __init__(self, initial_value):
+        """Initialize the instance with a stored vinteger alue."""
         self.value = initial_value
 
     @cache
     def add(self, a, b, *, c=1, d=2):
+        """Add to the stored integer value."""
         return self.value + a + b + c + d
 
     @cache
     def subtract_from(self, input_value):
+        """Subtract from the stored integer value."""
         return self.value - input_value
 
 
@@ -29,7 +36,8 @@ print(math_instance.add(1, b=1, c=2, d=3))
 print(math_instance.add(1, b=0, c=2, d=3))
 
 # Clear all the caches so we don't use too much memory
-clear_caches()
+math_instance.add.clear_cache()
+math_instance.subtract_from.clear_cache()
 
 print(
     math_instance.add(1, 0, c=3, d=4)
