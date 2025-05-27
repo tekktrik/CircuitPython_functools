@@ -17,9 +17,9 @@ Introduction
     :alt: Build Status
 
 
-.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
-    :target: https://github.com/psf/black
-    :alt: Code Style: Black
+.. image:: https://img.shields.io/badge/code%20style-ruff-2a1833.svg
+    :target: https://github.com/astral-sh/ruff
+    :alt: Code Style: ruff
 
 A CircuitPython implementation of CPython's functools library
 
