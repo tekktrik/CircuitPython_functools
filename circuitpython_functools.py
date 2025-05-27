@@ -6,8 +6,7 @@
 # SPDX-License-Identifier: MIT
 # SPDX-License-Identifier: PSF-2.0
 
-"""
-`circuitpython_functools`
+"""`circuitpython_functools`
 ================================================================================
 
 A CircuitPython implementation of CPython's functools library.  Note that
