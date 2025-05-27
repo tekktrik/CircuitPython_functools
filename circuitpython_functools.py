@@ -6,13 +6,7 @@
 # SPDX-License-Identifier: MIT
 # SPDX-License-Identifier: PSF-2.0
 
-"""`circuitpython_functools`
-================================================================================
-
-A CircuitPython implementation of CPython's functools library.  Note that
-this implementation is not a 1-to-1 replica, but rather provides the same
-functionality with minor differences in usage.
-
+"""CircuitPython implementation of CPython's functools library.
 
 * Author(s): Alec Delaney
 
@@ -31,7 +25,7 @@ import gc
 __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/tekktrik/CircuitPython_functools.git"
 
-cache_record = []
+cache_records = {}
 
 
 # pylint: disable=too-few-public-methods
@@ -40,11 +34,10 @@ class _ObjectMark:
 
 
 # Cache-related code ported from CPython
-# Unlike CPython, there is only one cache for all functions.
-# This class can be cleared using the function `clear_caches()`.
 
 
 def _make_key(args, kwargs, kwd_mark=(_ObjectMark(),)):
+    """Make a key for the cache records."""
     key = tuple(args)
     if kwargs:
         key += kwd_mark
@@ -53,36 +46,37 @@ def _make_key(args, kwargs, kwd_mark=(_ObjectMark(),)):
     return hash(key)
 
 
+def _clear_cache(user_function):
+    """Clear a specific cache."""
+    if user_function in cache_records:
+        cache_records[user_function].clear()
+        gc.collect()
+
+
 def cache(user_function):
-    """Unbounded cache"""
+    """Create an unbounded cache."""
     sentinel = object()
-    cache_dict = {}
-    cache_get = cache_dict.get
+    func_key = user_function
 
     def cache_wrapper(*args, **kwargs):
         key = _make_key(args, kwargs)
-        result = cache_get(key, sentinel)
+        if cache_records.get(func_key) is None:
+            cache_records[func_key] = {}
+        result = cache_records[func_key].get(key, sentinel)
         if result is not sentinel:
             return result
         result = user_function(*args, **kwargs)
-        cache_dict[key] = result
+        cache_records[func_key][key] = result
         return result
 
-    cache_record.append(cache_dict)
+    cache_wrapper.clear_cache = partial(_clear_cache, user_function)
 
     return cache_wrapper
 
 
-def clear_caches():
-    """Clears all the caches"""
-    for cache_contents in cache_record:
-        cache_contents.clear()
-    gc.collect()
-
-
 # Partial ported from the MicroPython library
 def partial(func, *args, **kwargs):
-    """Creates a partial of the function"""
+    """Create a partial of the function."""
 
     def _partial(*more_args, **more_kwargs):
         local_kwargs = kwargs.copy()
@@ -96,5 +90,5 @@ def partial(func, *args, **kwargs):
 # their simplified implementation of the wraps function!
 # pylint: disable=unused-argument
 def wraps(wrapped, assigned=None, updated=None):
-    """Defines a wrapper function when writing function decorators"""
+    """Define a wrapper function when writing function decorators."""
     return wrapped
