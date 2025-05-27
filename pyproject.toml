@@ -28,7 +28,7 @@ keywords = [
     "functions",
     "decorators",
 ]
-license = {text = "MIT"}
+license = "MIT AND PSF-2.0"
 classifiers = [
     "Intended Audience :: Developers",
     "Topic :: Software Development :: Libraries",
