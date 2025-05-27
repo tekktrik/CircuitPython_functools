@@ -28,7 +28,6 @@ __repo__ = "https://github.com/tekktrik/CircuitPython_functools.git"
 cache_records = {}
 
 
-# pylint: disable=too-few-public-methods
 class _ObjectMark:
     pass
 
@@ -88,7 +87,6 @@ def partial(func, *args, **kwargs):
 
 # Thank you to the MicroPython Development team for
 # their simplified implementation of the wraps function!
-# pylint: disable=unused-argument
 def wraps(wrapped, assigned=None, updated=None):
     """Define a wrapper function when writing function decorators."""
     return wrapped
