@@ -3,35 +3,33 @@
 #
 # SPDX-License-Identifier: Unlicense
 
-from circuitpython_functools import cache, clear_caches
+"""Example usage of the circuitpython_functools module."""
+
+from circuitpython_functools import cache
 
 
-class MathClass:
-    def __init__(self, initial_value):
-        self.value = initial_value
-
-    @cache
-    def add(self, a, b, *, c=1, d=2):
-        return self.value + a + b + c + d
-
-    @cache
-    def subtract_from(self, input_value):
-        return self.value - input_value
+@cache
+def add(a, b, *, c=1, d=2):
+    """Perform addition."""
+    return a + b + c + d
 
 
-math_instance = MathClass(5)
+@cache
+def subtract(first_value, second_value):
+    """Perform subtraction."""
+    return first_value - second_value
 
-print(math_instance.add(1, 1, c=2, d=3))
-print(math_instance.add(1, 1, c=2, d=3))  # Repeat call, will use cached result
-print(math_instance.add(1, 0, c=3, d=4))
-print(math_instance.subtract_from(42))
-print(math_instance.add(1, b=1, c=2, d=3))
-print(math_instance.add(1, b=0, c=2, d=3))
+
+print(add(1, 1, c=2, d=3))
+print(add(1, 1, c=2, d=3))  # Repeat call, will use cached result
+print(add(1, 0, c=3, d=4))
+print(subtract(42, 20))
+print(add(1, b=1, c=2, d=3))
+print(add(1, b=0, c=2, d=3))
 
 # Clear all the caches so we don't use too much memory
-clear_caches()
+add.cache_clear()
+subtract.cache_clear()
 
-print(
-    math_instance.add(1, 0, c=3, d=4)
-)  # Cache was cleared, so this is caclulated again
-print(math_instance.subtract_from(18))
+print(add(1, 0, c=3, d=4))  # Cache was cleared, so this is caclulated again
+print(subtract(18, 4))

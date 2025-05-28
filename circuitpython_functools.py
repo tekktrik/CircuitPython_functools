@@ -6,14 +6,7 @@
 # SPDX-License-Identifier: MIT
 # SPDX-License-Identifier: PSF-2.0
 
-"""
-`circuitpython_functools`
-================================================================================
-
-A CircuitPython implementation of CPython's functools library.  Note that
-this implementation is not a 1-to-1 replica, but rather provides the same
-functionality with minor differences in usage.
-
+"""CircuitPython implementation of CPython's functools library.
 
 * Author(s): Alec Delaney
 
@@ -28,24 +21,29 @@ Implementation Notes
 """
 
 import gc
+from collections import OrderedDict
 
 __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/tekktrik/CircuitPython_functools.git"
 
-cache_record = []
+_cache_records = {}
+_lru_cache_records = {}
 
 
-# pylint: disable=too-few-public-methods
 class _ObjectMark:
     pass
 
 
 # Cache-related code ported from CPython
-# Unlike CPython, there is only one cache for all functions.
-# This class can be cleared using the function `clear_caches()`.
+
+# As a general note, some weird things are happening here due to internal differences between
+# CPython and CircuitPython, such as the fact that closures can't have things added to them,
+# hence the need to create objects so that cache_clear can be called from the returned "wrapped"
+# functions.
 
 
 def _make_key(args, kwargs, kwd_mark=(_ObjectMark(),)):
+    """Make a key for the cache records."""
     key = tuple(args)
     if kwargs:
         key += kwd_mark
@@ -54,36 +52,105 @@ def _make_key(args, kwargs, kwd_mark=(_ObjectMark(),)):
     return hash(key)
 
 
-def cache(user_function):
-    """Unbounded cache"""
-    sentinel = object()
-    cache_dict = {}
-    cache_get = cache_dict.get
+class CachedFunc:
+    """Wrapped unbounded cache function."""
 
-    def cache_wrapper(*args, **kwargs):
-        key = _make_key(args, kwargs)
-        result = cache_get(key, sentinel)
-        if result is not sentinel:
+    def __init__(self, maxsize, user_func):
+        """Initialize the wrapped cache function."""
+        self._maxsize = maxsize
+        checked_records = _cache_records if maxsize < 0 else _lru_cache_records
+
+        def cache_wrapper(*args, **kwargs):
+            sentinel = object()
+
+            # Make the key for the inner dictionary
+            key = _make_key(args, kwargs)
+
+            # if there is no inner dictionary yet, make one
+            if checked_records.get(user_func) is None:
+                checked_records[user_func] = OrderedDict()
+
+            # Attempt to get an existing entry, updating its location in the queue
+            # and returning it if so
+            result = checked_records[user_func].get(key, sentinel)
+            if result is not sentinel:
+                checked_records[user_func].move_to_end(key)
+                return result
+
+            # Calculate the actual value
+            result = user_func(*args, **kwargs)
+
+            # If the cache is bounded and too full to store the new result, eject the
+            # least-recently-use entry
+            if maxsize >= 0 and len(checked_records[user_func]) >= maxsize:
+                first_key = next(iter(checked_records[user_func]))
+                del checked_records[user_func][first_key]
+
+            # Store the result
+            checked_records[user_func][key] = result
+
+            # Return the new result
             return result
-        result = user_function(*args, **kwargs)
-        cache_dict[key] = result
-        return result
 
-    cache_record.append(cache_dict)
+        self._user_func = user_func
+        self._wrapped_func = cache_wrapper
 
-    return cache_wrapper
+    def __call__(self, *args, **kwargs):
+        """Call the wrapped function."""
+        return self._wrapped_func(*args, **kwargs)
+
+    def cache_clear(self):
+        """Clear the cache."""
+        checked_records = _cache_records if self._maxsize < 0 else _lru_cache_records
+        if self._user_func in checked_records:
+            checked_records[self._user_func].clear()
+            gc.collect()
 
 
-def clear_caches():
-    """Clears all the caches"""
-    for cache_contents in cache_record:
-        cache_contents.clear()
-    gc.collect()
+class LRUCachedFunc:
+    """Wrapped LRU cache function."""
+
+    def __init__(self, wrapped_func, maxsize):
+        """Initialize the wrapped LRU cache function."""
+        self._maxsize = maxsize
+        self._wrapped_func = wrapped_func
+
+    def __call__(self, *args, **kwargs):
+        """Call the wrapped function."""
+        print(type(self._wrapped_func))
+        return self._wrapped_func(*args, **kwargs)
+
+    def cache_clear(self):
+        """Clear the LRU cache."""
+        return self.cache_clear()
+
+
+def cache(user_function):
+    """Create an unbounded cache."""
+    return CachedFunc(-1, user_function)
+
+
+def lru_cache(*args, **kwargs):
+    """Create a bounded cache which ejects the least recently used entry."""
+    cpython_max_args = 2
+    if len(args) == cpython_max_args or "typed" in kwargs:
+        raise NotImplementedError("Using typed is not supported")
+
+    if len(args) == 1 and isinstance(args[0], int):
+        maxsize = args[0]
+    elif len(args) == 1 and str(type(args[0]) == "<class 'function'>"):
+        return CachedFunc(128, args[0])
+    elif "maxsize" in kwargs:
+        maxsize = kwargs["maxsize"]
+    else:
+        raise SyntaxError("lru_cache syntax incorrect")
+
+    return partial(CachedFunc, maxsize)
 
 
 # Partial ported from the MicroPython library
 def partial(func, *args, **kwargs):
-    """Creates a partial of the function"""
+    """Create a partial of the function."""
 
     def _partial(*more_args, **more_kwargs):
         local_kwargs = kwargs.copy()
@@ -95,7 +162,6 @@ def partial(func, *args, **kwargs):
 
 # Thank you to the MicroPython Development team for
 # their simplified implementation of the wraps function!
-# pylint: disable=unused-argument
 def wraps(wrapped, assigned=None, updated=None):
-    """Defines a wrapper function when writing function decorators"""
+    """Define a wrapper function when writing function decorators."""
     return wrapped
