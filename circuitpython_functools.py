@@ -107,24 +107,6 @@ class CachedFunc:
             gc.collect()
 
 
-class LRUCachedFunc:
-    """Wrapped LRU cache function."""
-
-    def __init__(self, wrapped_func, maxsize):
-        """Initialize the wrapped LRU cache function."""
-        self._maxsize = maxsize
-        self._wrapped_func = wrapped_func
-
-    def __call__(self, *args, **kwargs):
-        """Call the wrapped function."""
-        print(type(self._wrapped_func))
-        return self._wrapped_func(*args, **kwargs)
-
-    def cache_clear(self):
-        """Clear the LRU cache."""
-        return self.cache_clear()
-
-
 def cache(user_function):
     """Create an unbounded cache."""
     return CachedFunc(-1, user_function)
