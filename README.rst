@@ -51,7 +51,7 @@ following command to install:
 
 .. code-block:: shell
 
-    circup install circuiython_functools
+    circup install circuitpython_functools
 
 Or the following command to update an existing version:
 
