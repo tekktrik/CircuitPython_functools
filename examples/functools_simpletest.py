@@ -5,10 +5,10 @@
 
 """Example usage of the circuitpython_functools module."""
 
-from circuitpython_functools import cache
+from circuitpython_functools import cache, lru_cache
 
 
-@cache
+@lru_cache(maxsize=3)
 def add(a, b, *, c=1, d=2):
     """Perform addition."""
     return a + b + c + d
