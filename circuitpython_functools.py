@@ -52,7 +52,7 @@ def _make_key(args, kwargs, kwd_mark=(_ObjectMark(),)):
     return hash(key)
 
 
-class CachedFunc:
+class _CachedFunc:
     """Wrapped unbounded cache function."""
 
     def __init__(self, maxsize, user_func):
@@ -109,7 +109,7 @@ class CachedFunc:
 
 def cache(user_function):
     """Create an unbounded cache."""
-    return CachedFunc(-1, user_function)
+    return _CachedFunc(-1, user_function)
 
 
 def lru_cache(*args, **kwargs):
@@ -121,13 +121,13 @@ def lru_cache(*args, **kwargs):
     if len(args) == 1 and isinstance(args[0], int):
         maxsize = args[0]
     elif len(args) == 1 and str(type(args[0]) == "<class 'function'>"):
-        return CachedFunc(128, args[0])
+        return _CachedFunc(128, args[0])
     elif "maxsize" in kwargs:
         maxsize = kwargs["maxsize"]
     else:
         raise SyntaxError("lru_cache syntax incorrect")
 
-    return partial(CachedFunc, maxsize)
+    return partial(_CachedFunc, maxsize)
 
 
 # Partial ported from the MicroPython library
