@@ -150,3 +150,57 @@ def wraps(wrapped, assigned=None, updated=None):
         return wrapper
     return decorator
 
+
+
+def total_ordering(cls):
+    has_lt = "__lt__" in cls.__dict__
+    has_gt = "__gt__" in cls.__dict__
+    has_le = "__le__" in cls.__dict__
+    has_ge = "__ge__" in cls.__dict__
+
+    if not (has_lt or has_gt or has_le or has_ge):
+        raise ValueError('must define at least one ordering operation: < > <= >=')
+    
+    def instance_guard(x, cls):
+        if not isinstance(x, cls):
+            raise TypeError("unsupport comparison")
+        return True
+
+    if not has_lt:
+        if has_le:
+            lt_func = lambda self, other: self <= other and self != other
+        elif has_gt:
+            lt_func = lambda self, other: not (self > other) and self != other
+        else:  # has_ge
+            lt_func = lambda self, other: not (self >= other)
+        cls.__lt__ = lambda self, other: instance_guard(other, cls) and lt_func(self, other)
+
+    if not has_le:
+        if has_lt:
+            le_func = lambda self, other: self < other or self == other
+        elif has_gt:
+            le_func = lambda self, other: not (self > other)
+        else:  # has_ge
+            le_func = lambda self, other: self == other or not (self >= other)
+        cls.__le__ = lambda self, other: instance_guard(other, cls) and le_func(self, other)
+
+    if not has_gt:
+        if has_lt:
+            gt_func = lambda self, other: self != other and not (self < other)
+        elif has_ge:
+            gt_func = lambda self, other: self >= other and self != other
+        else:  # has_le
+            gt_func = lambda self, other: not (self <= other)
+        cls.__gt__ = lambda self, other: instance_guard(other, cls) and gt_func(self, other)
+
+    if not has_ge:
+        if has_lt:
+            ge_func = lambda self, other: not (self < other)
+        elif has_gt:
+            ge_func = lambda self, other: self > other or self == other
+        else:  # has_le
+            ge_func = lambda self, other: self == other or not (self <= other)
+        cls.__ge__ = lambda self, other: instance_guard(other, cls) and ge_func(self, other)
+
+    return cls
+
