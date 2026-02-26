@@ -146,4 +146,7 @@ def partial(func, *args, **kwargs):
 # their simplified implementation of the wraps function!
 def wraps(wrapped, assigned=None, updated=None):
     """Define a wrapper function when writing function decorators."""
-    return wrapped
+    def decorator(wrapper):
+        return wrapper
+    return decorator
+
