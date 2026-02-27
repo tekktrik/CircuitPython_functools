@@ -146,21 +146,23 @@ def partial(func, *args, **kwargs):
 # their simplified implementation of the wraps function!
 def wraps(wrapped, assigned=None, updated=None):
     """Define a wrapper function when writing function decorators."""
+
     def decorator(wrapper):
         return wrapper
+
     return decorator
 
 
-
-def total_ordering(cls):
+def total_ordering(cls):  # noqa: PLR0912
+    """Automatically create the comparison functions."""
     has_lt = "__lt__" in cls.__dict__
     has_gt = "__gt__" in cls.__dict__
     has_le = "__le__" in cls.__dict__
     has_ge = "__ge__" in cls.__dict__
 
     if not (has_lt or has_gt or has_le or has_ge):
-        raise ValueError('must define at least one ordering operation: < > <= >=')
-    
+        raise ValueError("must define at least one ordering operation: < > <= >=")
+
     def instance_guard(x, cls):
         if not isinstance(x, cls):
             raise TypeError("unsupport comparison")
@@ -173,7 +175,9 @@ def total_ordering(cls):
             lt_func = lambda self, other: not (self > other) and self != other
         else:  # has_ge
             lt_func = lambda self, other: not (self >= other)
-        cls.__lt__ = lambda self, other: instance_guard(other, cls) and lt_func(self, other)
+        cls.__lt__ = lambda self, other: instance_guard(other, cls) and lt_func(
+            self, other
+        )
 
     if not has_le:
         if has_lt:
@@ -182,7 +186,9 @@ def total_ordering(cls):
             le_func = lambda self, other: not (self > other)
         else:  # has_ge
             le_func = lambda self, other: self == other or not (self >= other)
-        cls.__le__ = lambda self, other: instance_guard(other, cls) and le_func(self, other)
+        cls.__le__ = lambda self, other: instance_guard(other, cls) and le_func(
+            self, other
+        )
 
     if not has_gt:
         if has_lt:
@@ -191,7 +197,9 @@ def total_ordering(cls):
             gt_func = lambda self, other: self >= other and self != other
         else:  # has_le
             gt_func = lambda self, other: not (self <= other)
-        cls.__gt__ = lambda self, other: instance_guard(other, cls) and gt_func(self, other)
+        cls.__gt__ = lambda self, other: instance_guard(other, cls) and gt_func(
+            self, other
+        )
 
     if not has_ge:
         if has_lt:
@@ -200,7 +208,8 @@ def total_ordering(cls):
             ge_func = lambda self, other: self > other or self == other
         else:  # has_le
             ge_func = lambda self, other: self == other or not (self <= other)
-        cls.__ge__ = lambda self, other: instance_guard(other, cls) and ge_func(self, other)
+        cls.__ge__ = lambda self, other: instance_guard(other, cls) and ge_func(
+            self, other
+        )
 
     return cls
-
