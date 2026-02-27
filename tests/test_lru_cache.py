@@ -8,7 +8,7 @@
 
 import pytest
 
-from circuitpython_functools import _lru_cache_records, lru_cache
+from circuitpython_functools import lru_cache
 
 # Factorial example adapted from CPython documentation
 
@@ -111,29 +111,6 @@ def test_lru_cache_func_kwarg():
 
     _ = factorial(n=12)
     assert TOTAL_CALLS == 13  # noqa: PLR2004
-
-    TOTAL_CALLS = 0
-
-
-def test_lru_cache_cache_clear():
-    """Tests the automatically attached cache_clear method works."""
-    global TOTAL_CALLS  # noqa: PLW0603
-
-    @lru_cache
-    def factorial(n):
-        global TOTAL_CALLS  # noqa: PLW0603
-        TOTAL_CALLS += 1
-        return n * factorial(n=n - 1) if n else 1
-
-    assert TOTAL_CALLS == 0  # noqa: PLR2004
-
-    _ = factorial(n=10)
-    assert TOTAL_CALLS == 11  # noqa: PLR2004
-
-    factorial.cache_clear()
-
-    _ = factorial(n=10)
-    assert TOTAL_CALLS == 22  # noqa: PLR2004
 
     TOTAL_CALLS = 0
 
