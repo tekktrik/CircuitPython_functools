@@ -1,0 +1,43 @@
+# SPDX-FileCopyrightText: 2026 Alec Delaney
+# SPDX-License-Identifier: MIT
+
+name: Run code tests
+
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+    paths:
+      - '.github/workflows/codecov.yml'
+      - 'pyproject.toml'
+      - 'circuitpython_functools'
+      - 'tests/**'
+
+permissions: read-all
+
+jobs:
+  codecov:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup Python 3.x
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.py-version }}
+      - name: Checkout the repository
+        uses: actions/checkout@v6
+      - name: Install base requirements
+        run: |
+          pip install ".[optional]"
+      - name: Install test requirements
+        run: |
+          pip install pytest pytest-cov
+      - name: Run tests
+        run: |
+          pytest --cov --cov-branch --cov-report=xml
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
