@@ -24,7 +24,7 @@ jobs:
       - name: Setup Python 3.x
         uses: actions/setup-python@v6
         with:
-          python-version: ${{ matrix.py-version }}
+          python-version: 3.x
       - name: Checkout the repository
         uses: actions/checkout@v6
       - name: Install base requirements
