@@ -17,9 +17,15 @@ Introduction
     :alt: Build Status
 
 
+.. image:: https://codecov.io/github/tekktrik/CircuitPython_functools/graph/badge.svg?token=MU8I8TJNKI
+    :target: https://codecov.io/github/tekktrik/CircuitPython_functools
+    :alt: CodeCov Metrics
+
+
 .. image:: https://img.shields.io/badge/code%20style-ruff-2a1833.svg
     :target: https://github.com/astral-sh/ruff
     :alt: Code Style: ruff
+
 
 .. image:: https://img.shields.io/badge/License-MIT-yellow.svg
     :target: https://opensource.org/licenses/MIT
